@@ -177,7 +177,7 @@ class SocialShare {
     return response;
   }
 
-  stastatic Future<String?> shareTwitter(String imagePath,String captionText,
+  static Future<String?> shareTwitter(String imagePath,String captionText,
       {List<String>? hashtags, String? url, String? trailingText}) async {
     Map<String, dynamic> args;
     String modifiedUrl;
