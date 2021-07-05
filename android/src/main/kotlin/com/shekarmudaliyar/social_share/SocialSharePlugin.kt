@@ -66,7 +66,33 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             } else {
                 result.success("error")
             }
-        } else if (call.method == "shareFacebookStory") {
+        }
+        else if (call.method == "sharedInstagram"){
+
+            val stickerImage: String? = call.argument("stickerImage")
+            val attributionURL: String? = call.argument("attributionURL")
+            val file =  File(registrar.activeContext().cacheDir,stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//
+            intent.putExtra("content_url", attributionURL)
+            Log.d("", registrar.activity().toString())
+            // Instantiate activity and verify it will resolve implicit intent
+            val activity: Activity = registrar.activity()
+            activity.grantUriPermission("com.instagram.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity.packageManager.resolveActivity(intent, 0) != null) {
+                registrar.activeContext().startActivity(intent)
+                result.success("success")
+            } else {
+                result.success("error")
+            }
+
+        }
+        else if (call.method == "shareFacebookStory") {
             //share on facebook story
             val stickerImage: String? = call.argument("stickerImage")
             val backgroundTopColor: String? = call.argument("backgroundTopColor")
@@ -94,7 +120,125 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             } else {
                 result.success("error")
             }
-        } else if (call.method == "shareOptions") {
+        }
+        else if (call.method == "shareFacebookFeed"){
+
+            val stickerImage: String? = call.argument("stickerImage")
+            val content: String? = call.argument("content")
+            val appId: String? = call.argument("appId")
+
+            val file =  File(registrar.activeContext().cacheDir,stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/*"
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId)
+
+            intent.putExtra("content_url", content)
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            Log.d("", registrar.activity().toString())
+            // Instantiate activity and verify it will resolve implicit intent
+            val activity: Activity = registrar.activity()
+            var facebookAppFound = false
+
+            val matches: List<ResolveInfo> = activity.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (info in matches) {
+                if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana") ||
+                        info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.lite")) {
+                    intent.setPackage(info.activityInfo.packageName)
+                    facebookAppFound = true
+                    break
+                }
+            }
+
+            if (facebookAppFound) {
+                registrar.activeContext().startActivity(intent)
+            } else {
+                //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
+                result.success("error")
+
+            }
+
+
+        }
+        else if (call.method == "shareTwitter") {
+            //shares content on twitter
+
+            val stickerImage: String? = call.argument("stickerImage")
+            val text: String? = call.argument("captionText")
+            val url: String? = call.argument("url")
+            val trailingText: String? = call.argument("trailingText")
+            val file =  File(registrar.activeContext().cacheDir,stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+
+            val urlScheme = "http://www.twitter.com/intent/tweet?text=$text$url$trailingText"
+            val intent = Intent(Intent.ACTION_SEND)
+//
+            intent.data = Uri.parse(urlScheme)
+            intent.type="image/*"
+            intent.setPackage("com.twitter.android")
+            intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            Log.d("log",urlScheme)
+            val activity: Activity = registrar.activity()
+            activity.grantUriPermission("com.twitter.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity.packageManager.resolveActivity(intent, 0) != null) {
+                registrar.activeContext().startActivity(intent)
+                result.success("success")
+            } else {
+
+                result.success("error")
+            }
+            //shares content on twitter
+            /* val text: String? = call.argument("captionText")
+             val url: String? = call.argument("url")
+             val trailingText: String? = call.argument("trailingText")
+             val urlScheme = "http://www.twitter.com/intent/tweet?text=$text$url$trailingText"
+             Log.d("log",urlScheme)
+             val intent = Intent(Intent.ACTION_VIEW)
+             intent.data = Uri.parse(urlScheme)
+             try {
+                 registrar.activity().startActivity(intent)
+                 result.success("true")
+             } catch (ex: ActivityNotFoundException) {
+                 result.success("false")
+             }*/
+        }
+        else if (call.method == "shareWhatsapp") {
+            //shares content on WhatsApp
+            val content: String? = call.argument("content")
+            val stickerImage: String? = call.argument("stickerImage")
+            val file =  File(registrar.activeContext().cacheDir,stickerImage)
+            val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
+            val whatsappIntent = Intent(Intent.ACTION_SEND)
+            whatsappIntent.type = "*/*"
+            whatsappIntent.setPackage("com.whatsapp")
+            whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
+            whatsappIntent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            whatsappIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+            val activity: Activity = registrar.activity()
+            activity.grantUriPermission("com.whatsapp", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            if (activity.packageManager.resolveActivity(whatsappIntent, 0) != null) {
+                registrar.activeContext().startActivity(whatsappIntent)
+                result.success("success")
+            } else {
+                result.success("error")
+            }
+            //shares content on WhatsApp
+            /*val content: String? = call.argument("content")
+            val whatsappIntent = Intent(Intent.ACTION_SEND)
+            whatsappIntent.type = "text/plain"
+            whatsappIntent.setPackage("com.whatsapp")
+            whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
+            try {
+                registrar.activity().startActivity(whatsappIntent)
+                result.success("true")
+            } catch (ex: ActivityNotFoundException) {
+                result.success("false")
+            }*/
+        }
+        else if (call.method == "shareOptions") {
             //native share options
             val content: String? = call.argument("content")
             val image: String? = call.argument("image")
@@ -120,27 +264,16 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             registrar.activeContext().startActivity(chooserIntent)
             result.success(true)
 
-        } else if (call.method == "copyToClipboard") {
+        }
+        else if (call.method == "copyToClipboard") {
             //copies content onto the clipboard
             val content: String? = call.argument("content")
             val clipboard =registrar.context().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("", content)
             clipboard.setPrimaryClip(clip)
             result.success(true)
-        } else if (call.method == "shareWhatsapp") {
-            //shares content on WhatsApp
-            val content: String? = call.argument("content")
-            val whatsappIntent = Intent(Intent.ACTION_SEND)
-            whatsappIntent.type = "text/plain"
-            whatsappIntent.setPackage("com.whatsapp")
-            whatsappIntent.putExtra(Intent.EXTRA_TEXT, content)
-            try {
-                registrar.activity().startActivity(whatsappIntent)
-                result.success("true")
-            } catch (ex: ActivityNotFoundException) {
-                result.success("false")
-            }
-        } else if (call.method == "shareSms") {
+        }
+        else if (call.method == "shareSms") {
             //shares content on sms
             val content: String? = call.argument("message")
             val intent = Intent(Intent.ACTION_SENDTO)
@@ -148,21 +281,6 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             intent.type = "vnd.android-dir/mms-sms"
             intent.data = Uri.parse("sms:" )
             intent.putExtra("sms_body", content)
-            try {
-                registrar.activity().startActivity(intent)
-                result.success("true")
-            } catch (ex: ActivityNotFoundException) {
-                result.success("false")
-            }
-        } else if (call.method == "shareTwitter") {
-            //shares content on twitter
-            val text: String? = call.argument("captionText")
-            val url: String? = call.argument("url")
-            val trailingText: String? = call.argument("trailingText")
-            val urlScheme = "http://www.twitter.com/intent/tweet?text=$text$url$trailingText"
-            Log.d("log",urlScheme)
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(urlScheme)
             try {
                 registrar.activity().startActivity(intent)
                 result.success("true")
