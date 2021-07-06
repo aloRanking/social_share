@@ -65,7 +65,7 @@ class SocialShare {
       };
     }
     final String? response = await _channel.invokeMethod(
-      'shareInstagramStory',
+      'sharedInstagramStory',
       args,
     );
     return response;
@@ -103,7 +103,7 @@ class SocialShare {
       };
     }
     final String? response = await _channel.invokeMethod(
-      'shareInstagram',
+      'sharedInstagram',
       args,
     );
     return response;
