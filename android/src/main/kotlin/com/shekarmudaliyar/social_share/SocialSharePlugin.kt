@@ -153,6 +153,7 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
 
             if (facebookAppFound) {
                 registrar.activeContext().startActivity(intent)
+                result.success("success")
             } else {
                 //showWarningDialog(appCompatActivity, appCompatActivity.getString(R.string.error_activity_not_found));
                 result.success("error")
