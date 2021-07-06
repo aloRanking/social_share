@@ -171,15 +171,20 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             val file =  File(registrar.activeContext().cacheDir,stickerImage)
             val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
 
-            val urlScheme = "http://www.twitter.com/intent/tweet?text=$text$url$trailingText"
+            //val urlScheme = "http://www.twitter.com/intent/tweet?text=$text$url$trailingText"
             val intent = Intent(Intent.ACTION_SEND)
 //
-            intent.data = Uri.parse(urlScheme)
-            intent.type="image/*"
+            //intent.data = Uri.parse(urlScheme)
+
             intent.setPackage("com.twitter.android")
+            intent.putExtra(Intent.EXTRA_TEXT, text)
+            intent.type="text/plain"
+           intent.putExtra(Intent.EXTRA_TEXT, trailingText)
+            intent.putExtra(Intent.EXTRA_TEXT, url)
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
+            intent.type="image/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            Log.d("log",urlScheme)
+          //  Log.d("log",urlScheme)
             val activity: Activity = registrar.activity()
             activity.grantUriPermission("com.twitter.android", stickerImageFile, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             if (activity.packageManager.resolveActivity(intent, 0) != null) {
