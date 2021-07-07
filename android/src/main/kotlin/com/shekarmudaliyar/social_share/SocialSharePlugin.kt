@@ -75,7 +75,20 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
 
             val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "*/*"
+            Log.d("log",stickerImage)
+
+            var media = stickerImage?.endsWith("mp4")
+
+            if(media ==true){
+                intent.type = "video/*"
+                Log.d("log","video done")
+                Log.d("log",stickerImage)
+            }else{
+                intent.type = "image/*"
+                Log.d("log","image set")
+                Log.d("log",stickerImage)
+            }
+
             intent.setPackage("com.instagram.android")
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

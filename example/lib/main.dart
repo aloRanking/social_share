@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
@@ -18,8 +21,44 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    downloadFile();
     super.initState();
     initPlatformState();
+  }
+
+  void downloadFile() async {
+    var filei = await urlToFile('https:\/\/ttrconsult.com.ng\/api\/pay\/campaign\/137\/60e0133b8a28a.mp4', 'video');
+
+    file = filei;
+  }
+
+  Future<File> urlToFile(String imageUrl, String mediaType) async {
+    File file;
+// generate random number.
+    var rng = new Random();
+// get temporary directory of device.
+    Directory tempDir = await getTemporaryDirectory();
+// get temporary path from temporary directory.
+    String tempPath = tempDir.path;
+// create a new file in temporary path with random file name.
+    if (mediaType == 'image') {
+      file =
+      new File('$tempPath' + '/' + (rng.nextInt(100)).toString() + '.png');
+    } else {
+      file =
+      new File('$tempPath' + '/' + (rng.nextInt(100)).toString() + '.mp4');
+    }
+
+// call http.get method and pass imageUrl into it to get response.
+    var response = await Dio().get(imageUrl,
+        options: Options(responseType: ResponseType.bytes));
+    // http.Response response = await http.get(imageUrl);
+// write bodyBytes received in response to file.
+    await file.writeAsBytes(response.data);
+// now return the file which is created with random name in
+// temporary directory and image bytes from response is written to // that file.
+    print('downloaded');
+    return file;
   }
 
   Future<void> initPlatformState() async {
@@ -33,6 +72,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  File file;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +95,48 @@ class _MyAppState extends State<MyApp> {
                   'Running on: $_platformVersion\n',
                   textAlign: TextAlign.center,
                 ),
+            RaisedButton(
+              onPressed: () async {
+                SocialShare.shareInstagramFeed(file.path,
+                  contentURL:"Hello World \n https://google.com",
+                ).then((data) {
+                  print(data);
+                });
+              },
+              child: Text("Share on Instagram"),),
+                RaisedButton(
+                  onPressed: () async {
+                    SocialShare.shareWhatsapp(file.path,
+                      "Hello World \n https://google.com",
+                    ).then((data) {
+                      print(data);
+                    });
+                  },
+                  child: Text("Share on WhatsApp"),
+                ),
+                RaisedButton(
+                  onPressed: () async {
+                    SocialShare.shareWhatsapp(file.path,
+                      "Hello World \n https://google.com",
+                    ).then((data) {
+                      print(data);
+                    });
+                  },
+                  child: Text("Share on WhatsApp"),
+                ),
+                RaisedButton(
+                  onPressed: () async {
+                    SocialShare.shareTwitter( file.path,
+                      "This is Social Share twitter example",
+                      hashtags: ["hello", "world", "foo", "bar"],
+                      url: "https://google.com/#/hello",
+                      trailingText: "\nhello",
+                    ).then((data) {
+                      print(data);
+                    });
+                  },
+                  child: Text("Share on twitter"),
+                ),
                 RaisedButton(
                   onPressed: () async {
                     File file = await ImagePicker.pickImage(
@@ -69,6 +152,24 @@ class _MyAppState extends State<MyApp> {
                     });
                   },
                   child: Text("Share On Instagram Story"),
+                ),
+
+                ElevatedButton(onPressed: (){
+                  SocialShare.shareFacebookFeed(file.path, 'what up');
+
+                }, child: Text('FaceBook')),
+               /* RaisedButton(
+                  onPressed: () async {
+                    SocialShare.shareTwitter( file.path,
+                      "This is Social Share twitter example",
+                      hashtags: ["hello", "world", "foo", "bar"],
+                      url: "https://google.com/#/hello",
+                      trailingText: "\nhello",
+                    ).then((data) {
+                      print(data);
+                    });
+                  },
+                  child: Text("Share on twitter"),
                 ),
                 RaisedButton(
                   onPressed: () async {
@@ -166,7 +267,7 @@ class _MyAppState extends State<MyApp> {
                     });
                   },
                   child: Text("Share on Whatsapp"),
-                ),
+                ),*/
                 RaisedButton(
                   onPressed: () async {
                     SocialShare.shareTelegram(
