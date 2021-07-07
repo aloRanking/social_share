@@ -76,6 +76,7 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
 
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "*/*"
+            intent.setPackage("com.instagram.android")
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 //
