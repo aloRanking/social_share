@@ -75,7 +75,7 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
 
             val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "image/*"
+            intent.type = "*/*"
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 //
@@ -130,7 +130,7 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
             val file =  File(registrar.activeContext().cacheDir,stickerImage)
             val stickerImageFile = FileProvider.getUriForFile(registrar.activeContext(), registrar.activeContext().applicationContext.packageName + ".com.shekarmudaliyar.social_share", file)
             val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "image/*"
+            intent.type = "*/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.putExtra("com.facebook.platform.extra.APPLICATION_ID", appId)
 
@@ -183,7 +183,7 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
            intent.putExtra(Intent.EXTRA_TEXT, trailingText)
             intent.putExtra(Intent.EXTRA_TEXT, url)
             intent.putExtra(Intent.EXTRA_STREAM, stickerImageFile);
-            intent.type="image/*"
+            intent.type="*/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
           //  Log.d("log",urlScheme)
             val activity: Activity = registrar.activity()
