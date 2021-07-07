@@ -91,7 +91,14 @@ class SocialShare {
       File file = File(imagePath);
       Uint8List bytes = file.readAsBytesSync();
       var stickerData = bytes.buffer.asUint8List();
-      String stickerAssetName = 'stickerAsset.png';
+      String stickerAssetName;
+      if (imagePath.endsWith('mp4')) {
+        stickerAssetName = 'stickerAsset.mp4';
+
+      }
+      else{
+        stickerAssetName = 'stickerAsset.png';
+      }
       final Uint8List stickerAssetAsList = stickerData;
       final stickerAssetPath = '${tempDir.path}/$stickerAssetName';
       file = await File(stickerAssetPath).create();
@@ -161,7 +168,14 @@ class SocialShare {
       Uint8List bytes = file.readAsBytesSync();
       var stickerdata = bytes.buffer.asUint8List();
       final tempDir = await getTemporaryDirectory();
-      String stickerAssetName = 'stickerAsset.png';
+      String stickerAssetName;
+      if (imagePath.endsWith('mp4')) {
+        stickerAssetName = 'stickerAsset.mp4';
+
+      }
+      else{
+        stickerAssetName = 'stickerAsset.png';
+      }
       final Uint8List stickerAssetAsList = stickerdata;
       final stickerAssetPath = '${tempDir.path}/$stickerAssetName';
       file = await File(stickerAssetPath).create();
@@ -185,7 +199,14 @@ class SocialShare {
     Uint8List bytes = file.readAsBytesSync();
     var stickerdata = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
-    String stickerAssetName = 'stickerAsset.png';
+    String stickerAssetName;
+    if (imagePath.endsWith('mp4')) {
+      stickerAssetName = 'stickerAsset.mp4';
+
+    }
+    else{
+      stickerAssetName = 'stickerAsset.png';
+    }
     final Uint8List stickerAssetAsList = stickerdata;
     final stickerAssetPath = '${tempDir.path}/$stickerAssetName';
     file = await File(stickerAssetPath).create();
@@ -226,7 +247,15 @@ class SocialShare {
     Uint8List bytes = file.readAsBytesSync();
     var stickerdata = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
-    String stickerAssetName = 'stickerAsset.png';
+    String stickerAssetName;
+    if (imagePath.endsWith('mp4')) {
+     stickerAssetName = 'stickerAsset.mp4';
+
+    }
+    else{
+      stickerAssetName = 'stickerAsset.png';
+    }
+
     final Uint8List stickerAssetAsList = stickerdata;
     final stickerAssetPath = '${tempDir.path}/$stickerAssetName';
     file = await File(stickerAssetPath).create();
